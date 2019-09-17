@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+	<meta name="format-detection" content="telephone=yes" />
+  <title>매그나칩반도체 모바일</title>
+
+  <!-- basic css -->
+  <link rel="stylesheet" type="text/css" href="/resources/css/fonts.css" />
+  <link rel="stylesheet" type="text/css" href="/resources/css/mobile.css" />
+	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css">
+  
+  <!-- fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300,400,500,700,900&amp;subset=korean" rel="stylesheet">
+	
+  <!-- basic js -->
+	<script type="text/javascript" src="/resources/js/jquery-1.12.4.min.js"></script>
+
+</head>
+<body>
+	<div id="loginPageBody">
+		<div>
+			<h1>
+				<img src="/resources/images/logo_white.png" alt="매그너칩 로고">
+				<span>현장감독자 다면평가</span>
+			</h1>
+			<div class="loginDiv">
+				<div class="login">
+					<input type="text" id="loginId" placeholder="ID(사번)를 입력해 주세요" class="inputId" style="color: white;">
+					<div class="passwordWrap">
+						<span>•</span><span>•</span><span>•</span>
+						<input type="password" class="pass inputPassword" id="loginPw1" name="numb1sec" maxlength="1" required>
+						<input type="password" class="pass inputPassword" id="loginPw2" name="numb2sec" maxlength="1" required>
+						<input type="password" class="pass inputPassword" id="loginPw3" name="numb3sec" maxlength="1" required>
+						<input type="password" class="pass inputPassword" id="loginPw4" name="numb4sec" maxlength="1" required>
+					</div>
+					<span class="passwordText">주민번호 뒷번호의 끝 네자리 번호</span>
+					<div class="enter"><button onClick="checkLogin();">Login</button></div>
+				</div>
+				<div class="copyright"><span>Copyright@2018 Maganachip Semiconductor. All rights reserved.</span></div>
+			</div>
+		</div>
+	</div>
+	<!-- // wrap -->
+</body>
+</html>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	$('input[type=password]').click(function() {
+		$(this).select();
+	});
+	
+
+	$('input.pass').keyup(function(e) {
+		if((e.keyCode >= 48 && e.keyCode <= 57) 
+				|| (e.keyCode >= 96 && e.keyCode <= 105)) {
+			$(this).next('input.pass').focus().select();
+		}
+	});
+	
+	$('.login').find('input').keydown(function(e) {
+		if(e.keyCode == 13) {
+			checkLogin();
+		}
+	});
+});
+
+function checkLogin() {
+	
+	if($('#loginId').val() == '') {
+		alert('아이디를 입력해주세요.');
+		$('#loginId').focus();
+		return;
+	}
+	
+	var loginPw = $('#loginPw1').val() + $('#loginPw2').val() + $('#loginPw3').val() + $('#loginPw4').val();
+	
+	if(String(loginPw).length != 4) {
+		alert('패스워드를 입력해주세요.');
+		$('#loginPw1').focus();
+		return;
+	}
+	
+	var param = {};
+	param.loginId = $('#loginId').val();
+	param.loginPw = loginPw;
+	
+	
+	$.ajax({
+		type: "POST",
+		url :"/checkLogin.do",
+		data:param,
+		dataType:"json",
+		success: function (data) {
+			
+			if(data.result == 1) {
+				location.href = '/index.do';
+			} else {
+				alert(data.msg);
+			}
+		},
+		error: function (error) {
+			alert('error: ' + error.status + ' - ' + error.statusText);
+		}
+	});
+}
+
+</script>
